@@ -1,24 +1,27 @@
 <?php
 
-use App\Http\Controllers\ContentController;
-use App\Http\Controllers\UserController;
-use App\Http\Controllers\MessageController;
-use App\Models\User;
-use GuzzleHttp\Psr7\Request;
-// use Illuminate\Contracts\View\View;
+use App\Http\Controllers\ProfileController;
+use Illuminate\Foundation\Application;
 use Illuminate\Support\Facades\Route;
-use Illuminate\Support\Facades\View;
-use Illuminate\Support\Facades\View as FacadesView;
+use Inertia\Inertia;
 
-Route::get('/', [UserController::class, 'index']);
-
-Route::get('k', function () {
-    $users = User::all();
-    return View::make('index')->with('index', $users);
-    //return FacadesView::make('users')->with('users', $users);
+Route::get('/', function () {
+    return Inertia::render('Welcome', [
+        'canLogin' => Route::has('login'),
+        'canRegister' => Route::has('register'),
+        'laravelVersion' => Application::VERSION,
+        'phpVersion' => PHP_VERSION,
+    ]);
 });
 
-Route::post('/submit', [MessageController::class, 'index']);
+Route::get('/dashboard', function () {
+    return Inertia::render('Dashboard');
+})->middleware(['auth', 'verified'])->name('dashboard');
 
-Route::get('/contents', [ContentController::class, 'index']);
+Route::middleware('auth')->group(function () {
+    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+});
 
+require __DIR__.'/auth.php';

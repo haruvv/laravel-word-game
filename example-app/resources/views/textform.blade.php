@@ -6,11 +6,11 @@
     <title>Document</title>
 </head>
 <body>
-    hrhrh
 <form action="{{ url('/submit') }}" method="post">
     @csrf <!-- CSRF保護 -->
     名前：<input type="text" name="message">
-    <input type="submit" value="送信">
+    <br>
+    <input type="submit" value="ゲーム開始">
 </form>
 </body>
 </html>
